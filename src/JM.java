@@ -8,6 +8,7 @@ public class JM {
 
         try {
             Object smbl = symbol(inputString);
+            //param.symbol = "1";
             System.out.println("symbol " + smbl);
 
 //            System.out.println(isNumeric(splitResult[0]));
@@ -35,18 +36,28 @@ public class JM {
             return null;
         }
     }
-    public param{
-        char symbol; //   /*-+
-        int param1;
-        int param2;
+}
 
-        String result(){
-            choos
-            return param1
+class param{
+    char symbol; //   *-+/
+    int param1;
+    int param2;
+
+    String getResult(){
+        switch (symbol){
+            case '*':
+                return String.valueOf(param1 * param2);
+            case '/':
+                return String.valueOf(param1 / param2);
+            case '+':
+                return String.valueOf(param1 + param2);
+            case '-':
+                return String.valueOf(param1 - param2);
         }
-
+        return null;
     }
 }
+
 
 
 /*
