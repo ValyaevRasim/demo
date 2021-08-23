@@ -1,63 +1,88 @@
-/*import java.util.Arrays;
-import java.util.Scanner;*/
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.regex.*;
 
 public class JM {
     public static void main(String[] args) {
-        String inputString = "IX*V";
+        // ввод данных
+        Scanner param = new Scanner(System.in);
+        String inputString = param.nextLine();
 
         try {
-            Object smbl = symbol(inputString);
-            //param.symbol = "1";
+            // через regex определяем symbol - знак действия
+            String smbl = symbol(inputString);
             System.out.println("symbol " + smbl);
 
-//            System.out.println(isNumeric(splitResult[0]));
-//            System.out.println(isNumeric(splitResult[1]));
-//
-//            String[] splitResult = inputString.split(ptrn);
-//            System.out.println(Arrays.toString(splitResult));
+            //создаем массив из данных. У split разделитель - symbol
+            String[] splitResult = inputString.split(smbl);
+            System.out.println(Arrays.toString(splitResult));
+
+            //определяем тип введенных данных (римские или арабские)
+
+            param data = new param();
+            data.param1 = Integer.parseInt(splitResult[0]);
+            data.param2 = Integer.parseInt(splitResult[1]);
+            data.symbol = smbl;
+
+            System.out.println(data.param1);
+            System.out.println(data.param2);
+
+            System.out.println(data.getResult());
+
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static boolean isNumeric(String str) {
-        return str != null && str.matches("[0-9]+");
-    }
-
-    public static Object symbol(String str) {
+    public static String symbol(String str) {
 
         Pattern pattern = Pattern.compile("(\\+|\\/|\\*|\\-)");
         Matcher matcher = pattern.matcher(str);
         if (matcher.find()) {
-            return matcher.group();
+            return String.valueOf(matcher.group());
         } else {
             return null;
         }
     }
 }
 
+
 class param{
-    char symbol; //   *-+/
+    String symbol; //   *-+/
+    String data1;
+    String data2;
     int param1;
     int param2;
+/*
+    if isNumeric(data1){
+        param1 = data1;
+    }
 
+    if isNumeric(data2){
+        param2 = data2;
+    }
+*/
     String getResult(){
-        switch (symbol){
-            case '*':
+        switch (String.valueOf(symbol)){
+            case "*":
                 return String.valueOf(param1 * param2);
-            case '/':
+            case "/":
                 return String.valueOf(param1 / param2);
-            case '+':
+            case "+":
                 return String.valueOf(param1 + param2);
-            case '-':
+            case "-":
                 return String.valueOf(param1 - param2);
         }
         return null;
     }
-}
 
+    public static boolean isNumeric(String str) {
+        return str != null && str.matches("[0-9]+");
+    }
+
+
+}
 
 
 /*
