@@ -1,5 +1,3 @@
-
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,16 +8,20 @@ public class NumberConvertManager {
         try {
             Scanner param = new Scanner(System.in);
             String inputString = param.nextLine();
-
             // определяем символ
             String smbl = type_symbol.symbol(inputString);
 
             //создаем массив из данных. split разделитель - smbl
+            if (smbl == null) {
+                smbl = "\\" + smbl;
+//                System.out.println("Нет оператора");
+                System.exit(0);
+            }
             String[] splitResult = inputString.split(smbl);
-            //        System.out.println(Arrays.toString(splitResult));
+//            System.out.println(Arrays.toString(splitResult));
 
             parameter data = new parameter();
-            data.symbol = smbl;
+            data.symbol = smbl.replace("\\", "");
             String result;
 
             // определяем тип цифр (арабские(int) или римские(String))
@@ -28,31 +30,36 @@ public class NumberConvertManager {
                 data.param1 = Integer.parseInt(splitResult[0]);
                 data.param2 = Integer.parseInt(splitResult[1]);
                 result = data.getResult();
+                System.out.println(result);
             } else {
                 // переводим римские в арабские
-                data.param1 = roman_to_arab.transform_roman_to_arabl(splitResult[0]);
-                data.param2 = roman_to_arab.transform_roman_to_arabl(splitResult[1]);
+                data.param1 = roman_to_arab.transform_roman_to_arabic(splitResult[0]);
+                data.param2 = roman_to_arab.transform_roman_to_arabic(splitResult[1]);
                 String sum = data.getResult();
 
                 // переводим арабские в римские
-                int number_input = Integer.parseInt(sum);
-                result = arab_to_roman.transform_arab_to_roman(number_input);
+                if (sum != null) {
+                    int number_input = Integer.parseInt(sum);
+                    result = arab_to_roman.transform_arab_to_roman(number_input);
+                    System.out.println(result);
+                }
+
             }
-            if (result == null){
-                System.out.println("Данные не соответствуют требованиям");
-            } else {
-                System.out.println(result);
-            }
-        }
-        catch(Exception e) {
-            System.out.println("ERROR: " + e);
+        } catch (Exception e) {
+            System.out.println("ERROR:" + e);
         }
     }
 
     public static boolean isNumeric(String str) {
-        return str != null && str.matches("[0-9]+");
+        if (str == null || str.matches("[0-9][\\.,][0-9]")) {
+            System.out.println("Введите цело число(арабскими) или римскими");
+            System.exit(0);
+            return false;
+        } else if (str.matches("[0-9]")) {
+            return true;
+        }
+        return false;
     }
-
 }
 
 
@@ -62,8 +69,11 @@ class parameter{
     int param2;
 
     String getResult(){
+
+//        System.out.println(param1.getClass().getSimpleName());
+
         if (param1 > 10 || param2 > 10){
-            System.out.println("числа должны быть в интервале от 0 до 10");
+            System.out.println("числа должны быть в интервале от 1 до 10");
         } else {
             switch (String.valueOf(symbol)){
                 case "*":
@@ -84,12 +94,13 @@ class parameter{
 class type_symbol{
 
     public static String symbol(String str) {
-
-        Pattern pattern = Pattern.compile("(\\+|\\/|\\*|\\-)");
+        Pattern pattern = Pattern.compile("(\\+|\\*|/|-)");
         Matcher matcher = pattern.matcher(str);
         if (matcher.find()) {
-            return String.valueOf(matcher.group());
+//            System.out.println(String.valueOf(matcher.group(0)));
+            return matcher.group(0);
         } else {
+            System.out.println(String.valueOf("допускаемые арифметические операции: + * / -"));
             return null;
         }
     }
@@ -127,29 +138,36 @@ class roman_to_arab {
         else return 0;
     }
 
-    public static int transform_roman_to_arabl(String roman) {
+    public static int transform_roman_to_arabic(String roman) {
         roman=roman.toLowerCase();
-        int val=0;
-        int val_next=0;
-        int temp=0;
+        int val;
+        int val_next;
+        int temp;
         int result=0;
 
         for (int i=0;i<roman.length();i++) {
-            val=value(roman.charAt(i));
-            if (i<roman.length()-1) {
-                val_next=value(roman.charAt(i+1));
-            } else val_next=0;
+            try{
+                val=value(roman.charAt(i));
+                if (i<roman.length()-1) {
+                    val_next=value(roman.charAt(i+1));
+                } else val_next=0;
 
-            if (val_next==0) {
-                temp=val;
-            } else {
-                if (val>val_next) temp=val;
-                else if (val<val_next) {
-                    temp=val_next-val;
-                    i++;
-                } else if (val==val_next) temp=val;
+                if (val_next==0) {
+                    temp=val;
+                } else {
+                    if (val>val_next) temp=val;
+                    else if (val<val_next) {
+                        temp=val_next-val;
+                        i++;
+//                    } else if (val==val_next) temp=val;
+                    } else temp=val;
+                }
+                result+=temp;
             }
-            result+=temp;
+            catch(Exception e) {
+                System.out.println("ERROR:transform_roman_to_arabic "  + e);
+            }
+
         }
 //        System.out.println("Result is: " + result);
         return result;
