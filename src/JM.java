@@ -2,8 +2,9 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.*;
 
+
 public class JM {
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         // ввод данных
         Scanner param = new Scanner(System.in);
         String inputString = param.nextLine();
@@ -83,7 +84,6 @@ class param{
 
 
 }
-
 
 /*
 public static void (){
